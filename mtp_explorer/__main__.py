@@ -1,11 +1,13 @@
 import click
 
 import mtp_commands
+from mtp_explorer.model import devices
 
 
 @click.group()
-def cli():
-    pass
+@click.pass_context
+def cli(ctx: click.Context):
+    ctx.obj = devices.Devices()
 
 
 cli.add_command(mtp_commands.list_devices)

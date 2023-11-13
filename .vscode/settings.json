@@ -1,10 +1,10 @@
 {
     "[python]": {
-        "editor.defaultFormatter": "ms-python.python"
+        "editor.defaultFormatter": "ms-python.black-formatter"
     },
-    "python.formatting.provider": "none",
     "cSpell.words": [
         "gvfs",
         "pymtp"
-    ]
+    ],
+    "python.formatting.provider": "none"
 }

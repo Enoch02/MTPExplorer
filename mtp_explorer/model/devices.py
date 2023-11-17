@@ -7,7 +7,7 @@ from pathlib import Path
 class Devices(object):
     def __init__(self) -> None:
         self.platform: str = platform.system()
-        self.device_paths: list[Path] = self._get_devices(self.platform)
+        self.device_paths: list[Path] = self._get_devices(platform=self.platform)
 
     def _get_devices(self, platform: str):
         match platform:

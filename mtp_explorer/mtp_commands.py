@@ -1,10 +1,10 @@
 import pathlib
 import platform
-import re
 
 import click
 from Linux.device_management import l_list_devices
 from model.devices import Devices
+from util.file import get_all_files, copy_all_files
 from Windows.device_management import w_list_devices
 
 
@@ -20,37 +20,46 @@ def list_devices():
             click.echo("Your OS is not supported")
 
 
-# TODO: create option that searches for accepts extensions to search for.
-# TODO: work on how to handle patterns later
 @click.command()
-@click.argument("pattern", type=click.STRING)
+@click.argument("extension", type=click.STRING)
 @click.option("--device", type=click.INT, default=0)
-@click.option("--extension", type=click.STRING)
 @click.option(
     "--exclude",
     multiple=True,
     default=["Android", ".thumbnails", "LOST.DIR"],
 )
 @click.pass_obj
-def find(devices: Devices, pattern: str, device: int, exclude: list[str]):
-    """Find the files that match the specified pattern on a device"""
+def find_extension(devices: Devices, extension: str, device: int, exclude: list[str]):
+    """List the files that match the specified extension."""
     try:
         device_path = devices.device_paths[device]
-        files = list(get_all_items(device_path, exclude, pattern))
+        files = list(
+            get_all_files(
+                root=device_path,
+                exclude=exclude,
+                extension=extension,
+            )
+        )
 
-        for file in files:
-            click.echo(file)
+        if (len(files) > 0):
+            for file in files:
+                click.echo(file.name)
+
+            if click.confirm(f"Do you want to copy {len(files)} files"):
+                destination_path = pathlib.Path(
+                    click.prompt(
+                    text="Enter the destination path",
+                    type=click.Path(readable=True),
+                    )
+                )
+                copy_all_files(
+                    files=files,
+                    destination=destination_path,
+                )
+        else:
+            click.echo(f"'{extension}' files not found on the device.")
+
     except IndexError:
         click.echo("No device connected!")
-
-
-def get_all_items(root: pathlib.Path, exclude: list[str], extension: str):
-    for item in root.iterdir():
-        if item.name in exclude:
-            continue
-
-        if item.suffix == extension:
-            yield item
-
-        if item.is_dir():
-            yield from get_all_items(item, exclude, extension)
+    except Exception as e:
+        click.echo(e)

@@ -11,7 +11,7 @@ def cli(ctx: click.Context):
 
 
 cli.add_command(mtp_commands.list_devices)
-cli.add_command(mtp_commands.find)
+cli.add_command(mtp_commands.find_extension)
 
 
 if __name__ == "__main__":

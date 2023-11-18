@@ -4,7 +4,8 @@ import platform
 import click
 from Linux.device_management import l_list_devices
 from model.devices import Devices
-from util.file import get_all_files, copy_all_files, delete_all_files
+from util.display import file_preview, long_file_preview
+from util.file import copy_all_files, delete_all_files, get_all_files
 from Windows.device_management import w_list_devices
 
 
@@ -20,17 +21,21 @@ def list_devices():
             click.echo("Your OS is not supported")
 
 
+# TODO: add verbose output when searching
 @click.command()
 @click.argument("extension", type=click.STRING)
-@click.option("-d", "--device", type=click.INT, default=0, help="Select device by index")
+@click.option(
+    "-d", "--device", type=click.INT, default=0, help="Select device by index."
+)
 @click.option(
     "-e",
     "--exclude",
     multiple=True,
     default=["Android", ".thumbnails", "LOST.DIR"],
-    help="Specify folder(s) to ignore"
+    help="Specify folder(s) to ignore.",
 )
-@click.option("-x", "--delete", is_flag=True, help="Delete files after copying")
+@click.option("-x", "--delete", is_flag=True, help="Delete files after copying.")
+@click.option("-l", "--long", is_flag=True, help="Display files in long format.")
 @click.pass_obj
 def find_extension(
     devices: Devices,
@@ -38,6 +43,7 @@ def find_extension(
     device: int,
     exclude: list[str],
     delete: bool,
+    long: bool,
 ):
     """
     List the files that match the specified extension.
@@ -55,8 +61,11 @@ def find_extension(
         )
 
         if len(files) > 0:
-            for file in files:
-                click.echo(file.name)
+            match long:
+                case True:
+                    long_file_preview(files)
+                case False:
+                    file_preview(files)
 
             if click.confirm(f"Do you want to copy {len(files)} file(s)"):
                 destination_path = pathlib.Path(

@@ -82,10 +82,10 @@ def find_extension(
                     delete_all_files(files=files)
 
         else:
-            click.echo(f"'{extension}' files not found on the device.")
+            click.secho(f"'{extension}' files not found on the device.", fg="red")
 
     except IndexError:
-        click.echo("No device connected!")
+        click.secho("No device connected!", fg="red")
     except Exception as e:
         click.echo(e)
 

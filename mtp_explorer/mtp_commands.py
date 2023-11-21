@@ -11,7 +11,7 @@ from Windows.device_management import w_list_devices
 
 @click.command()
 def list_devices():
-    """List the mtp devices connected to this computer"""
+    """List the mtp devices connected to this computer."""
     match platform.system():
         case "Linux":
             l_list_devices(show_output=True)
@@ -31,7 +31,7 @@ def list_devices():
     "-e",
     "--exclude",
     multiple=True,
-    default=["Android", ".thumbnails", "LOST.DIR"],
+    default=["Android", ".thumbnails", "LOST.DIR", "cache"],
     help="Specify folder(s) to ignore.",
 )
 @click.option("-x", "--delete", is_flag=True, help="Delete files after copying.")
@@ -78,8 +78,8 @@ def find_extension(
                     files=files,
                     destination=destination_path,
                 )
-            if delete:
-                delete_all_files(files=files)
+                if delete:
+                    delete_all_files(files=files)
 
         else:
             click.echo(f"'{extension}' files not found on the device.")
@@ -88,6 +88,18 @@ def find_extension(
         click.echo("No device connected!")
     except Exception as e:
         click.echo(e)
+
+
+@click.command()
+@click.argument("pattern", type=click.STRING)
+@click.pass_obj
+def find_pattern(devices: Devices, pattern: str):
+    """
+    List the files that match the specified pattern.
+
+    EXTENSION is the regex pattern to search for []
+    """
+    click.echo(pattern)
 
 
 # TODO: add command to find folders?

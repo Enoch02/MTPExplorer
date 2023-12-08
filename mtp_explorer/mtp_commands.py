@@ -38,12 +38,12 @@ def list_devices():
 @click.option("-l", "--long", is_flag=True, help="Display files in long format.")
 @click.pass_obj
 def find_extension(
-    devices: Devices,
-    extension: str,
-    device: int,
-    exclude: list[str],
-    delete: bool,
-    long: bool,
+        devices: Devices,
+        extension: str,
+        device: int,
+        exclude: list[str],
+        delete: bool,
+        long: bool,
 ):
     """
     List the files that match the specified extension.
@@ -92,14 +92,22 @@ def find_extension(
 
 @click.command()
 @click.argument("pattern", type=click.STRING)
+@click.option("-d", "--device", type=click.INT, default=0, help="Select device by index.")
 @click.pass_obj
 def find_pattern(devices: Devices, pattern: str):
     """
     List the files that match the specified pattern.
 
-    EXTENSION is the regex pattern to search for []
+    PATTERN is the regex pattern to search for []
     """
-    click.echo(pattern)
-
+    """try:
+        device_path = devices.device_paths[device]
+        files = list(
+            get_all_files(
+                root=device_path
+            )
+        )
+    except"""
+    pass
 
 # TODO: add command to find folders?

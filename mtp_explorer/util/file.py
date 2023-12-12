@@ -34,13 +34,29 @@ def get_all_files(
             progress_thread.stop()
 
 
-# TODO: add checks for when the file to be copied exists at the destination
-# TODO: create folder if it does not exist
 def copy_all_files(files: list[pathlib.Path], destination: pathlib.Path):
+    overwrite_others = False
+
     with click.progressbar(iterable=files, label="Copying files") as bar:
         for file in bar:
-            f = destination.joinpath(file.name)
-            f.write_bytes(file.read_bytes())
+            destination_file = destination.joinpath(file.name)
+
+            match destination_file.exists():
+                case True:
+                    if overwrite_others:
+                        destination_file.write_bytes(file.read_bytes())
+                    else:
+                        if click.confirm(
+                            f"\n`{file.name}` exists at the destination, do you wish to overwrite it?"
+                        ):
+                            destination_file.write_bytes(file.read_bytes())
+
+                        overwrite_others = click.confirm(
+                            "Do you want to apply this choice to the remaining files?"
+                        )
+
+                case False:
+                    destination_file.write_bytes(file.read_bytes())
 
     click.echo(f"All files have been successfully copied to: {destination}")
 

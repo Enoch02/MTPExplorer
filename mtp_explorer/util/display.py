@@ -44,9 +44,10 @@ class IndeterminateProgress(threading.Thread):
     def run(self) -> None:
         while not self._stop_event.is_set():
             for char in "|/-\\":
-                sys.stdout.write("\r" + char)
-                sys.stdout.flush()
-                time.sleep(0.1)
+                if not self._stop_event.is_set():
+                    sys.stdout.write("\r" + char)
+                    sys.stdout.flush()
+                    time.sleep(0.1)
 
     def stop(self):
         self._stop_event.set()

@@ -38,12 +38,12 @@ def list_devices():
 @click.option("-l", "--long", is_flag=True, help="Display files in long format.")
 @click.pass_obj
 def find_extension(
-        devices: Devices,
-        extension: str,
-        device: int,
-        exclude: list[str],
-        delete: bool,
-        long: bool,
+    devices: Devices,
+    extension: str,
+    device: int,
+    exclude: list[str],
+    delete: bool,
+    long: bool,
 ):
     """
     List the files that match the specified extension.
@@ -71,7 +71,7 @@ def find_extension(
                 destination_path = pathlib.Path(
                     click.prompt(
                         text="Enter the destination path",
-                        type=click.Path(readable=True),
+                        type=click.Path(readable=True, writable=True),
                     )
                 )
                 copy_all_files(
@@ -92,7 +92,9 @@ def find_extension(
 
 @click.command()
 @click.argument("pattern", type=click.STRING)
-@click.option("-d", "--device", type=click.INT, default=0, help="Select device by index.")
+@click.option(
+    "-d", "--device", type=click.INT, default=0, help="Select device by index."
+)
 @click.pass_obj
 def find_pattern(devices: Devices, pattern: str):
     """
@@ -109,5 +111,6 @@ def find_pattern(devices: Devices, pattern: str):
         )
     except"""
     pass
+
 
 # TODO: add command to find folders?
